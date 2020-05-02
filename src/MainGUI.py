@@ -22,12 +22,11 @@ class MainGUI(QMainWindow, main_form):
         # COMM Tab
         for i in SerialComm.serial_ports():
             self.comboBox_comPort.addItem(i)
-        """
-        self.btn_PortOpen.connect(lambda: self.PortOpenClicked())
-        self.btn_PortClose.connect(lambda: self.PortCloseClicked())
-        self.btn_DataSend.connect(lambda: self.DataSendClicked())
-        self.btn_Clear.connect(lambda: self.ClearClicked())
-        """
+
+        self.btn_PortOpen.clicked.connect(lambda: self.PortOpenClicked())
+        self.btn_PortClose.clicked.connect(lambda: self.PortCloseClicked())
+        self.btn_DataSend.clicked.connect(lambda: self.DataSendClicked())
+        self.btn_Clear.clicked.connect(lambda: self.ClearClicked())
 
     # MAIN Tab
     def StartClicked(self):
@@ -42,29 +41,20 @@ class MainGUI(QMainWindow, main_form):
 
     def PortOpenClicked(self):
         print('PortOpenClicked')
-        model = QStandardItemModel(self)
-        model.appendRow("PortOpenClicked")
-        self.listView_Data_Recieve.setModel(model)
+        self.listWidget_Data_Recieve.addItem('PortOpenClicked')
 
-    
+
     def PortCloseClicked(self):
         print('PortCloseClicked')
-        model = QStandardItemModel(self)
-        model.appendRow("PortCloseClicked")
-        self.listView_Data_Recieve.setModel(model)
+        self.listWidget_Data_Recieve.addItem('PortCloseClicked')
 
     def DataSendClicked(self):
         print('DataSendClicked')
-        model = QStandardItemModel(self)
-        model.appendRow("DataSendClicked")
-        self.listView_Data_Recieve.setModel(model)
+        self.listWidget_Data_Recieve.addItem('DataSendClicked')
 
     def ClearClicked(self):
         print('ClearClicked')
-        model = QStandardItemModel(self)
-        model.appendRow("ClearClicked")
-        self.listView_Data_Recieve.setModel(model)
-    """
+        self.listWidget_Data_Recieve.addItem('ClearClicked')
 
 
 if __name__ == '__main__':

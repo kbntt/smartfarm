@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1307</width>
+    <width>1277</width>
     <height>814</height>
    </rect>
   </property>
@@ -208,6 +208,9 @@
       </property>
       <property name="text">
        <string>Port Open</string>
+      </property>
+      <property name="default">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="btn_PortClose">
@@ -595,13 +598,13 @@
         <string>16진수</string>
        </property>
       </widget>
-      <widget class="QListView" name="listView_Data_Recieve">
+      <widget class="QListWidget" name="listWidget_Data_Recieve">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
-         <width>1211</width>
-         <height>421</height>
+         <y>70</y>
+         <width>1201</width>
+         <height>401</height>
         </rect>
        </property>
       </widget>
@@ -614,7 +617,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1307</width>
+     <width>1277</width>
      <height>26</height>
     </rect>
    </property>
