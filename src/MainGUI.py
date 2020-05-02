@@ -1,7 +1,7 @@
 import sys
-from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import *
 
 main_form = uic.loadUiType("../GUI/Main.ui")[0]
 
@@ -9,6 +9,7 @@ main_form = uic.loadUiType("../GUI/Main.ui")[0]
 class MainGUI(QMainWindow, main_form):
     def __init__(self):
         super().__init__()
+
         self.setupUi(self)
         self.pushBtn_Start.clicked.connect(lambda: self.StartClicked())
         self.pushBtn_Stop.clicked.connect(lambda: self.StopClicked())
@@ -24,6 +25,11 @@ class MainGUI(QMainWindow, main_form):
 
 
 if __name__ == '__main__':
+    # Serial 통신
+    print("=== serial_ports() ===")
+    # print(serial_ports())
+    print("### serial_ports() ###")
+
     app = QApplication(sys.argv)
     mainWindow = MainGUI()
     mainWindow.show()
