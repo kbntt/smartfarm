@@ -1,14 +1,12 @@
 import sys
+
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import *
 import src.comm.SerialComm as SerialComm
 import threading
 import time
-import queue  # MK: queue를 사용하기 위해 추가
-import time  # MK: time을 사용하기 위해 추가
-import tkinter  # MK: tkinter(GUI)를 사용하기 위해 추가
+import src.comm.Variable as Var
 
 main_form = uic.loadUiType("../GUI/Main.ui")[0]
 serialPort = SerialComm.SerialPort()
@@ -39,9 +37,15 @@ class MainGUI(QMainWindow, main_form):
         self.btn_Mortor_State_Send.clicked.connect(lambda: self.MortorStateSendClicked())
 
         self.btn_Clear.clicked.connect(lambda: self.ClearClicked())
-
-        serialPort.Open('COM3', 9600)
         serialPort.RegisterReceiveCallback(self.OnReceiveSerialData)
+        t1 = threading.Thread(target=self.MainRhread, args=())
+        t1.start()
+
+
+    def MainRhread(self):
+        while True:
+            time.sleep(0.05)
+            self.UIUpdate()
 
     # MAIN Tab
     def StartClicked(self):
@@ -55,47 +59,52 @@ class MainGUI(QMainWindow, main_form):
     # COMM Tab
 
     def PortOpenClicked(self):
+        serialPort.Open(self.comboBox_comPort.currentText(), int(self.comboBox_BaudRate.currentText()))
         print('PortOpenClicked')
-        self.listWidget_Data_Recieve.addItem('PortOpenClicked')
 
     def PortCloseClicked(self):
         print('PortCloseClicked')
-        self.listWidget_Data_Recieve.addItem('PortCloseClicked')
+        serialPort.Close()
 
     def TempSendClicked(self):
-        print('TempSendClicked')
         message = self.textEdit_Temp_Send.toPlainText()
-        serialPort.Send(message)
-        self.listWidget_Data_Recieve.addItem('TempSendClicked')
+        serialPort.Send(message, self.OnSendSerialData)
 
     def HumiditySendClicked(self):
-        print('HumiditySendClicked')
-        message = 'M0'
-        serialPort.Send(message)
-        self.listWidget_Data_Recieve.addItem('HumiditySendClicked')
+        message = self.textEdit_Humidity_Send.toPlainText()
+        serialPort.Send(message, self.OnSendSerialData)
 
     def MortorMoveSendClicked(self):
-        print('MortorMoveSendClicked')
-        message = 'M0'
-        serialPort.Send(message)
-        self.listWidget_Data_Recieve.addItem('MortorMoveSendClicked')
+        message = self.textEdit_Mortor_Move_Send.toPlainText()
+        serialPort.Send(message, self.OnSendSerialData)
 
     def MortorStateSendClicked(self):
-        print('MortorStateSendClicked')
-        message = 'M0'
-        serialPort.Send(message)
-        self.listWidget_Data_Recieve.addItem('MortorStateSendClicked')
+        message = self.textEdit_Mortor_State_Send.toPlainText()
+        serialPort.Send(message, self.OnSendSerialData)
 
     def ClearClicked(self):
-        print('ClearClicked')
-        self.listWidget_Data_Recieve.addItem('ClearClicked')
+        self.listWidget_Data_Recieve.clear()
 
-    # serial data callback function
-    def OnReceiveSerialData(self):
-        print("OnReceiveSerialData")
-        print(serialPort.receivedMessage)
-        self.listWidget_Data_Recieve.addItem(serialPort.receivedMessage)
+    # SerialComm 콜백함수
+    def OnReceiveSerialData(self, receivedMessage):
+        self.listWidget_Data_Recieve.addItem(receivedMessage)
 
+    # SerialComm 콜백함수
+    def OnSendSerialData(self, sendMessage):
+        self.listWidget_Data_Recieve.addItem(sendMessage)
+
+    # 화면 업데이트
+    def UIUpdate(self):
+        if serialPort.isopen:
+            self.btn_PortOpen.setStyleSheet(Var.BTN_ON_COLOER)
+            self.btn_PortClose.setStyleSheet(Var.BTN_OFF_COLOER)
+            self.btn_PortOpen.setDisabled(True)
+            self.btn_PortClose.setEnabled(True)
+        else:
+            self.btn_PortOpen.setStyleSheet(Var.BTN_OFF_COLOER)
+            self.btn_PortClose.setStyleSheet(Var.BTN_ON_COLOER)
+            self.btn_PortClose.setDisabled(True)
+            self.btn_PortOpen.setEnabled(True)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

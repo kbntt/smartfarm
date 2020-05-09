@@ -2,7 +2,8 @@ import glob
 import sys
 import serial
 import _thread
-import time
+import datetime
+
 
 def serial_ports():
     if sys.platform.startswith('win'):
@@ -32,12 +33,10 @@ class SerialPort:
         self.baud = 0
         self.timeout = None
         self.ReceiveCallback = None
+        self.SendCallback = None
         self.isopen = False
         self.receivedMessage = None
         self.serialport = serial.Serial()
-        #self.serialport = serial.Serial('COM3', 9600)
-
-        print('__init__')
 
     def __del__(self):
         try:
@@ -58,46 +57,28 @@ class SerialPort:
         line = []
         print('SerialReadlineThread')
         while True:
-            #print("receivedMessage 1")
-            try:
-                #print("receivedMessage 2")
-                if self.isopen:
 
-                    # 데이터가 있있다면
+            try:
+                if self.serialport.isOpen():
+                    # 데이터가 있다면
                     for c in self.serialport.read():
                         # line 변수에 차곡차곡 추가하여 넣는다.
-                        #print("chr(c)", chr(c))
                         line.append(str(chr(c)))
 
                         if str(chr(c)) == '\r':  # 라인의 끝을 만나면
                             # 데이터 처리 함수로 호출
-                            print("22222")
-                            # print(line)
-                            print(''.join(line))
                             self.receivedMessage = ''.join(line)
-                            print("self.receivedMessage", self.receivedMessage)
-                            if self.receivedMessage != "":
-                                self.ReceiveCallback()
+                            now = datetime.datetime.now()
+                            nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+                            self.ReceiveCallback(nowDatetime+' <=='+self.receivedMessage)
                             # line 변수 초기화
                             del line[:]
                             self.receivedMessage = None
-                            # print("44444")
-
-                    """
-                    self.receivedMessage = self.serialport.readline()
-                    print("receivedMessage")
-                    print(self.serialport.readline())
-                    if self.receivedMessage != "":
-                        self.ReceiveCallback(self.receivedMessage)
-                        """
             except:
                 print("Error reading COM port: ", sys.exc_info()[0])
 
-    def IsOpen(self):
-        return self.isopen
-
     def Open(self, portname, baudrate):
-        if not self.isopen:
+        if not self.serialport.isOpen():
             # serialPort = 'portname', baudrate, bytesize = 8, parity = 'N',
             # stopbits = 1, timeout = None, xonxoff = 0, rtscts = 0)
             self.serialport.port = portname
@@ -116,32 +97,23 @@ class SerialPort:
             except:
                 print("Close error closing COM port: ", sys.exc_info()[0])
 
-    def Send(self, message):
-        print('Send', self.isopen)
-        print('message', message)
-        if self.isopen:
+    def Send(self, message, aSendCallback):
+        now = datetime.datetime.now()
+        nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+        self.SendCallback = aSendCallback
+        self.SendCallback(nowDatetime + ' =>' + message)
+
+        if self.serialport.isOpen():
             try:
                 # Ensure that the end of the message has both \r and \n, not just one or the other
-
                 newmessage = message.strip()
-                newmessage += '\r\n'
+                #newmessage += '\r\n'
                 self.serialport.write(newmessage.encode('utf-8'))
-                """
-                print("Send:", str.encode('M0'))
-                self.serialport.write(str.encode('M0'))
-                """
+
             except:
                 print("Error sending message: ", sys.exc_info()[0])
             else:
                 return True
         else:
             return False
-
-    # 데이터 처리할 함수
-    def parsing_data(data):
-        # 리스트 구조로 들어 왔기 때문에
-        # 작업하기 편하게 스트링으로 합침
-        print(data)
-        print(type(data))
-        tmp = ''.join(data)
-        print(tmp)

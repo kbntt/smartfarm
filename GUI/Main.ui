@@ -604,59 +604,17 @@ p, li { white-space: pre-wrap; }
       <property name="title">
        <string>Data Recieve</string>
       </property>
-      <widget class="QRadioButton" name="radioButton_recieve_ascii">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>20</y>
-         <width>90</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>ASCII</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
       <widget class="QPushButton" name="btn_Clear">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>10</y>
+         <x>1070</x>
+         <y>30</y>
          <width>141</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
         <string>Clear</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_recieve_10">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>90</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>10진수</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_recieve_16">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>20</y>
-         <width>90</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>16진수</string>
        </property>
       </widget>
       <widget class="QListWidget" name="listWidget_Data_Recieve">
