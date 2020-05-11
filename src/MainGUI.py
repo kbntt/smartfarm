@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, qApp
 import src.comm.SerialComm as SerialComm
 import threading
 import time
@@ -15,14 +15,39 @@ serialPort = SerialComm.SerialPort()
 class MainGUI(QMainWindow, main_form):
 
     def __init__(self, message=None):
-        super().__init__()
 
+        super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon('../GUI/img/icons-motorcycle-01.png'))
+        self.initMenuBarUI()
+        self.initMainTabUI()
+        self.initCOMMTabUI()
+        self.initStatusBarUI()
+
+        serialPort.RegisterReceiveCallback(self.OnReceiveSerialData)
+        t1 = threading.Thread(target=self.MainRhread, args=())
+        t1.start()
+
+    def initMenuBarUI(self):
+        exitAction = QAction(QIcon('../GUI/img/icon_exit_01.png'), '종료', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(qApp.quit)
+
+        self.statusBar()
+
+        menubar = self.menuBar()
+        menubar.setNativeMenuBar(False)
+        filemenu = menubar.addMenu('&File')
+        filemenu.addAction(exitAction)
+
+    def initMainTabUI(self):
 
         # MAIN Tab
         self.pushBtn_Start.clicked.connect(lambda: self.StartClicked())
         self.pushBtn_Stop.clicked.connect(lambda: self.StopClicked())
+
+    def initCOMMTabUI(self):
 
         # COMM Tab
         for index in SerialComm.serial_ports():
@@ -35,12 +60,10 @@ class MainGUI(QMainWindow, main_form):
         self.btn_Humidity_Send.clicked.connect(lambda: self.HumiditySendClicked())
         self.btn_Mortor_Move_Send.clicked.connect(lambda: self.MortorMoveSendClicked())
         self.btn_Mortor_State_Send.clicked.connect(lambda: self.MortorStateSendClicked())
-
         self.btn_Clear.clicked.connect(lambda: self.ClearClicked())
-        serialPort.RegisterReceiveCallback(self.OnReceiveSerialData)
-        t1 = threading.Thread(target=self.MainRhread, args=())
-        t1.start()
 
+    def initStatusBarUI(self):
+        self.statusBar().showMessage('Ready')
 
     def MainRhread(self):
         while True:
@@ -105,6 +128,7 @@ class MainGUI(QMainWindow, main_form):
             self.btn_PortClose.setStyleSheet(Var.BTN_ON_COLOER)
             self.btn_PortClose.setDisabled(True)
             self.btn_PortOpen.setEnabled(True)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -55,7 +55,6 @@ class SerialPort:
 
     def SerialReadlineThread(self):
         line = []
-        print('SerialReadlineThread')
         while True:
 
             try:
@@ -88,6 +87,8 @@ class SerialPort:
                 self.isopen = True
             except:
                 print("Error opening COM port: ", sys.exc_info()[0])
+        else:
+            self.isopen = False
 
     def Close(self):
         if self.isopen:
@@ -96,6 +97,9 @@ class SerialPort:
                 self.isopen = False
             except:
                 print("Close error closing COM port: ", sys.exc_info()[0])
+                print("Error opening COM port: ", sys.exc_info()[0])
+        else:
+            self.isopen = True
 
     def Send(self, message, aSendCallback):
         now = datetime.datetime.now()
