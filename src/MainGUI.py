@@ -3,10 +3,10 @@ import sys
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, qApp
-import src.comm.SerialComm as SerialComm
+import comm.SerialComm as SerialComm
 import threading
 import time
-import src.comm.Variable as Var
+import comm.Variable as Var
 
 main_form = uic.loadUiType("../GUI/Main.ui")[0]
 serialPort = SerialComm.SerialPort()
