@@ -74,6 +74,7 @@ class MainGUI(QMainWindow, main_form):
             time.sleep(0.05)
             self.UIUpdate()
 
+    # 카메라 영상
     def videoRhread(self):
 
         cap = cv2.VideoCapture('test.avi')
