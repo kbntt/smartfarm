@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1301</width>
+    <width>1185</width>
     <height>809</height>
    </rect>
   </property>
@@ -49,22 +49,12 @@ border-style: dashed;
 border-width: 1px;</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_main">
      <attribute name="title">
       <string>MAIN</string>
      </attribute>
-     <widget class="QOpenGLWidget" name="openGLWidget">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>100</y>
-        <width>721</width>
-        <height>421</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushBtn_Stop">
       <property name="geometry">
        <rect>
@@ -234,6 +224,19 @@ border-style: solid;</string>
       <property name="styleSheet">
        <string notr="true">background-color: #ffffff;
 border-style: solid;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_video">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>901</width>
+        <height>601</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -905,7 +908,7 @@ border-style: solid;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1301</width>
+     <width>1185</width>
      <height>21</height>
     </rect>
    </property>

@@ -1,16 +1,17 @@
 import sys
-
+import cv2
 from PyQt5 import uic
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, qApp
-import comm.SerialComm as SerialComm
+import src.comm.SerialComm as SerialComm
 import threading
 import time
-import comm.Variable as Var
+import src.comm.Variable as Var
 
 main_form = uic.loadUiType("../GUI/Main.ui")[0]
 serialPort = SerialComm.SerialPort()
-
 
 class MainGUI(QMainWindow, main_form):
 
@@ -27,6 +28,9 @@ class MainGUI(QMainWindow, main_form):
         serialPort.RegisterReceiveCallback(self.OnReceiveSerialData)
         t1 = threading.Thread(target=self.MainRhread, args=())
         t1.start()
+
+        t2 = threading.Thread(target=self.videoRhread, args=())
+        t2.start()
 
     def initMenuBarUI(self):
         exitAction = QAction(QIcon('../GUI/img/icon_exit_01.png'), '종료', self)
@@ -69,6 +73,27 @@ class MainGUI(QMainWindow, main_form):
         while True:
             time.sleep(0.05)
             self.UIUpdate()
+
+    def videoRhread(self):
+
+        cap = cv2.VideoCapture('test.avi')
+        width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.lbl_video.resize(width, height)
+        while True:
+            ret, img = cap.read()
+            if ret:
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                h, w, c = img.shape
+                qImg = QtGui.QImage(img.data, w, h, w * c, QtGui.QImage.Format_RGB888)
+                pixmap = QtGui.QPixmap.fromImage(qImg)
+                self.lbl_video.setPixmap(pixmap)
+            else:
+                QtWidgets.QMessageBox.about(mainWindow, "Error", "Cannot read frame.")
+                print("cannot read frame.")
+                break
+        cap.release()
+        print("Thread end.")
 
     # MAIN Tab
     def StartClicked(self):
