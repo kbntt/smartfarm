@@ -63,13 +63,12 @@ class SerialPort:
                     for c in self.serialport.read():
                         # line 변수에 차곡차곡 추가하여 넣는다.
                         line.append(str(chr(c)))
-
                         if str(chr(c)) == '\r':  # 라인의 끝을 만나면
                             # 데이터 처리 함수로 호출
                             self.receivedMessage = ''.join(line)
                             now = datetime.datetime.now()
                             nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
-                            self.ReceiveCallback(nowDatetime+' <=='+self.receivedMessage)
+                            self.ReceiveCallback(nowDatetime+' <=='+self.receivedMessage, self.receivedMessage)
                             # line 변수 초기화
                             del line[:]
                             self.receivedMessage = None

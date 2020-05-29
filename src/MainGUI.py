@@ -20,10 +20,10 @@ class MainGUI(QMainWindow, main_form):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon('../GUI/img/icons-motorcycle-01.png'))
-        self.initMenuBarUI()
+        #self.initMenuBarUI()
         self.initMainTabUI()
         self.initCOMMTabUI()
-        self.initStatusBarUI()
+        #self.initStatusBarUI()
 
         serialPort.RegisterReceiveCallback(self.OnReceiveSerialData)
         t1 = threading.Thread(target=self.MainRhread, args=())
@@ -39,7 +39,6 @@ class MainGUI(QMainWindow, main_form):
         exitAction.triggered.connect(qApp.quit)
 
         self.statusBar()
-
         menubar = self.menuBar()
         menubar.setNativeMenuBar(False)
         filemenu = menubar.addMenu('&File')
@@ -62,8 +61,11 @@ class MainGUI(QMainWindow, main_form):
 
         self.btn_Temp_Send.clicked.connect(lambda: self.TempSendClicked())
         self.btn_Humidity_Send.clicked.connect(lambda: self.HumiditySendClicked())
-        self.btn_Mortor_Move_Send.clicked.connect(lambda: self.MortorMoveSendClicked())
-        self.btn_Mortor_State_Send.clicked.connect(lambda: self.MortorStateSendClicked())
+        self.btn_Mortor1_Start.clicked.connect(lambda: self.MortorMove1StartClicked())
+        self.btn_Mortor1_Stop.clicked.connect(lambda: self.MortorMove1StopClicked())
+        self.btn_Mortor2_Start.clicked.connect(lambda: self.MortorMove2StartClicked())
+        self.btn_Mortor2_Stop.clicked.connect(lambda: self.MortorMove2StopClicked())
+
         self.btn_Clear.clicked.connect(lambda: self.ClearClicked())
 
     def initStatusBarUI(self):
@@ -77,7 +79,7 @@ class MainGUI(QMainWindow, main_form):
     # 카메라 영상
     def videoRhread(self):
 
-        cap = cv2.VideoCapture('test.avi')
+        cap = cv2.VideoCapture(0)
         width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.lbl_video.resize(width, height)
@@ -123,20 +125,36 @@ class MainGUI(QMainWindow, main_form):
         message = self.textEdit_Humidity_Send.toPlainText()
         serialPort.Send(message, self.OnSendSerialData)
 
-    def MortorMoveSendClicked(self):
-        message = self.textEdit_Mortor_Move_Send.toPlainText()
+    def MortorMove1StartClicked(self):
+        message = self.textEdit_Mortor1_Start_Send.toPlainText()
         serialPort.Send(message, self.OnSendSerialData)
 
-    def MortorStateSendClicked(self):
-        message = self.textEdit_Mortor_State_Send.toPlainText()
+    def MortorMove1StopClicked(self):
+        message = self.textEdit_Mortor1_Stop_Send.toPlainText()
+        serialPort.Send(message, self.OnSendSerialData)
+
+    def MortorMove2StartClicked(self):
+        message = self.textEdit_Mortor2_Start_Send.toPlainText()
+        serialPort.Send(message, self.OnSendSerialData)
+
+    def MortorMove2StopClicked(self):
+        message = self.textEdit_Mortor2_Stop_Send.toPlainText()
         serialPort.Send(message, self.OnSendSerialData)
 
     def ClearClicked(self):
         self.listWidget_Data_Recieve.clear()
 
     # SerialComm 콜백함수
-    def OnReceiveSerialData(self, receivedMessage):
+    def OnReceiveSerialData(self, receivedMessage, orgMessage):
         self.listWidget_Data_Recieve.addItem(receivedMessage)
+
+        print(receivedMessage)
+
+        print(orgMessage[0:1])
+        if orgMessage[0:1] == "T":
+            self.lineEdit_CurrTemp.setText(orgMessage[1:])
+        elif orgMessage[0:1] == "H":
+            self.lineEdit_Humidity.setText(orgMessage[1:])
 
     # SerialComm 콜백함수
     def OnSendSerialData(self, sendMessage):
